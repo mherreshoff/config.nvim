@@ -1,0 +1,13 @@
+[ ] Auto cd to homedir on new tab?
+[ ] Macro to start a new latex doc
+[ ] Split nvimux stuff into nav file.
+[ ] Weird dirvish toggle hidden files bug?
+[ ] Weird "s eats 2 char" thing?
+[✓] Macro to open a latex file in latex-making mode
+[✓] Macro to open studying roadmap + anki groklists
+[✓] Macro to get us to MoW-land
+[✓] Better fzf management
+[✓] C-space rotates out of terminal mode in terminal mode
+
+--- Needs design
+Session workflow (want to be able to switch mid-session)
