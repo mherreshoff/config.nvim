@@ -106,16 +106,19 @@ set viminfo=\"4,'100,/100,:100,h,f1
 call plug#begin('~/.config/nvim/packages')
 
 Plug 'Soares/fish.vim'
+
 Plug 'tpope/vim-markdown'
+
 let g:vimtex_imaps_enabled = 0
 Plug 'lervag/vimtex'
 
-" Plug 'Soares/trailguide.vim'
 let g:write_auto = ['text', 'markdown', 'tex', 'help!']
 noremap <leader>w :Write<CR>
 Plug 'Soares/write.vim'
+
 execute 'noremap <leader>a :Ag '
 Plug 'rking/ag.vim'
+
 noremap <leader>bd :Bclose<CR>
 noremap <leader>bD :Bclose!<CR>
 noremap <leader>bn :bn<CR>
@@ -123,12 +126,17 @@ noremap <leader>bp :bp<CR>
 noremap <leader>bl :ls<CR>
 noremap <leader>bt :b#<CR>
 Plug 'Soares/butane.vim'
+
 Plug 'Soares/eunuch.vim'
+
 Plug 'Soares/nvimux.vim'
 
 Plug 'tpope/vim-commentary'
+
 Plug 'tpope/vim-repeat'
+
 Plug 'tpope/vim-surround'
+
 noremap <leader>gs :Gstatus<CR>
 noremap <leader>gc :Gcommit<CR>
 noremap <leader>gu :Git push origin master<CR>
@@ -138,10 +146,6 @@ noremap <leader>cp :pwd<CR>
 noremap <leader>cd :lcd %:h<CR>:pwd<CR>
 noremap <leader>cg :execute 'edit' getcwd()<CR>
 noremap <leader>cc :e %:h<CR>
-" augroup so8res_dirvish
-"   autocmd!
-"   autocmd FileType dirvish silent lcd %
-" augroup end
 Plug 'justinmk/vim-dirvish'
 
 execute 'noremap <leader>ed :Files '
@@ -203,10 +207,12 @@ noremap <silent> <leader>ll :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
 noremap <silent> <leader>ln :execute empty(getloclist(0)) ? 'cnext' : 'lnext'<CR>
 noremap <silent> <leader>lp :execute empty(getloclist(0)) ? 'cprev' : 'cprev'<CR>
 noremap <silent> <leader>li :Neomake<CR>                      " Lint.
-" autocmd! BufWritePost,BufEnter * Neomake
 Plug 'neomake/neomake'
+
+Plug 'chriskempson/base16-vim'
 
 call plug#end()
 
 filetype plugin indent on
-colorscheme tomorrow-night-bright
+set termguicolors
+colorscheme base16-tomorrow
