@@ -184,12 +184,14 @@ Plug 'junegunn/fzf.vim'
 " Plug 'ludovicchabant/vim-gutentags'
 
 " autocds to project directory (as identified e.g. by a .git dir)
+let g:rooter_silent_chdir = 1
 Plug 'airblade/vim-rooter'
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 inoremap <silent><expr> <C-e> pumvisible() ? "\<C-n>" : deoplete#mappings#manual_complete()
+inoremap <silent><expr> <CR> pumvisible() ? deoplete#mappings#close_popup()."\<CR>" : "\<CR>"
 execute 'inoremap <silent> <C-@> <C-n> '
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
@@ -209,4 +211,15 @@ Plug 'neomake/neomake'
 call plug#end()
 
 filetype plugin indent on
-colorscheme tomorrow-night-bright
+
+set termguicolors
+set background=dark
+let g:base16_transparent_background = 1
+let g:base16_color_overrides = {
+      \ 'sbError': 'fg=dark2 bg=red bold',
+      \ 'sbWarning': 'fg=dark2 bg=orange',
+      \ 'sbNotify': 'fg=dark2 bg=yellow',
+      \ 'sbOk': 'fg=dark2 bg=green'}
+" let g:base16_color_modifications = {
+"       \ 'Comment': 'fg=green'}
+" colorscheme summerfruit
