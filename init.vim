@@ -105,6 +105,8 @@ set viminfo=\"4,'100,/100,:100,h,f1
 " Plugin Management:
 call plug#begin('~/.config/nvim/packages')
 
+Plug 'Soares/base16.nvim'
+
 Plug 'Soares/fish.vim'
 Plug 'tpope/vim-markdown'
 let g:vimtex_imaps_enabled = 0
@@ -214,12 +216,12 @@ filetype plugin indent on
 
 set termguicolors
 set background=dark
-let g:base16_transparent_background = 1
+let g:base16_transparent_background = 0
 let g:base16_color_overrides = {
-      \ 'sbError': 'fg=dark2 bg=red bold',
-      \ 'sbWarning': 'fg=dark2 bg=orange',
-      \ 'sbNotify': 'fg=dark2 bg=yellow',
-      \ 'sbOk': 'fg=dark2 bg=green'}
-" let g:base16_color_modifications = {
-"       \ 'Comment': 'fg=green'}
-" colorscheme summerfruit
+      \ 'sbError': 'fg=dark3 bg=red bold',
+      \ 'sbWarning': 'fg=dark3 bg=orange',
+      \ 'sbNotify': 'fg=dark3 bg=yellow',
+      \ 'sbOk': 'fg=dark3 bg=green'}
+let g:base16_color_modifiers = {
+      \ 'Comment': 'fg=similar1'}
+colorscheme summerfruit
