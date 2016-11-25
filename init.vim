@@ -91,17 +91,24 @@ let g:terminal_scrollback_buffer_size = 2147483647
 
 " Metadata storage -----------------------------------------------------------
 set viewdir=~/.local/share/nvim/view
-set shada=%,'100,<50,s10
+set shada='100,<50,s10
 
 " Nvim needs us to make this directory on our own:
 let s:backupdir = expand('~/.local/share/nvim/backup')
 if !isdirectory(s:backupdir)
 	echomsg 'Creating backup directory.'
-	call mkdir(s:backupdir, 'p')
-	" And since we're setting things up on a new system, let's check whether you
-	" want us to download the spell files too.
-	set spell
-	set nospell
+	try
+		call mkdir(s:backupdir, 'p')
+		" And since we're setting things up on a new system, let's check whether you
+		" want us to download the spell files too.
+		set spell
+		set nospell
+	catch /E739:/
+		" We're probably booting nvim from a process that couldn't create the
+		" directory if it wanted to. Ignore.
+		" (We'll get error messages when trying to save w/out a backup to notify
+		" us that something's wrong.)
+	endtry
 endif
 let &backupdir = s:backupdir
 unlet s:backupdir
@@ -445,5 +452,5 @@ call plug#end()
 " ============================================================================
 " Turn everything on and let's roll. =========================================
 filetype plugin indent on
-set background=light
-colorscheme brewer
+set background=dark
+colorscheme redscreen
