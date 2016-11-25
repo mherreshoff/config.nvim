@@ -7,8 +7,8 @@ noremap : :<c-f>
 " A convenient leader key for dvorak users:
 let mapleader=','
 " ; and , have now lost their homes. Let's find new ones:
-noremap - ;
-noremap _ ,
+noremap <leader>f ;
+noremap <leader>F ,
 " The marks that are exact (rather than line-level) should be easier to type:
 noremap ' `
 noremap ` '
@@ -19,8 +19,10 @@ vnoremap < <gv
 vnoremap > >gv
 " This makes it harder to lose work via accidental <C-U>.
 inoremap <C-U> <C-G>u<C-U>
-" Lets us add lines w/out staying in insert mode.
-nnoremap <CR> o
+" EXPERIMENTAL: By default, we join lines w/out adding spaces.  Use gJ for the
+" normal behavior.
+noremap J gJ
+noremap gJ J
 
 
 " ============================================================================
@@ -30,7 +32,9 @@ set backspace=indent,eol,start    " Make backspace sane.
 set backup                        " Always be safe.
 set breakindent                   " Wrap indented lines better
 set cursorline                    " Highlight the current line.
-set formatoptions=cqn1j           " see :help fo-table.
+" NOTE: when you're having trouble, :verbose set fo? and go nuke their changes.
+" See also |fo-table|.
+set formatoptions=2qnlj           " Add a leading car to put it on auto.
 set gdefault                      " Replace globally by default.
 set hidden                        " Allow buffer backgrounding.
 set history=1000                  " Remember a lot
@@ -62,7 +66,7 @@ set termguicolors                 " Use real colors.
 set nowildmenu
 set wildignore=*.aux,*.bak,*.class,*.dll,*.exe,*.gif,*.jpeg,*.jpg,*.png,*.o,*.pyc,dist/**,tags
 set wildmode=list:longest
-" Note: if you want to turn the wildmode on, and you want to cnoremap the <Up>
+" Note: if you want to turn the wildmenu on, and you want to cnoremap the <Up>
 " and <Down> keys, recall that it's hard to remap <Down>, and read
 " stackoverflow.com/questions/14842987
 
@@ -75,7 +79,7 @@ set wildmode=list:longest
 set tabstop=2
 set shiftwidth=0                  " Now the shiftwidth() function will use &tabstop
 set softtabstop=-1                " Use the shiftwidth
-set noexpandtab                   " Use tabs by default
+set expandtab                      " Alas, this appears to be where society converged.
 
 
 " ============================================================================
@@ -96,19 +100,19 @@ set shada='100,<50,s10
 " Nvim needs us to make this directory on our own:
 let s:backupdir = expand('~/.local/share/nvim/backup')
 if !isdirectory(s:backupdir)
-	echomsg 'Creating backup directory.'
-	try
-		call mkdir(s:backupdir, 'p')
-		" And since we're setting things up on a new system, let's check whether you
-		" want us to download the spell files too.
-		set spell
-		set nospell
-	catch /E739:/
-		" We're probably booting nvim from a process that couldn't create the
-		" directory if it wanted to. Ignore.
-		" (We'll get error messages when trying to save w/out a backup to notify
-		" us that something's wrong.)
-	endtry
+  echomsg 'Creating backup directory.'
+  try
+    call mkdir(s:backupdir, 'p')
+    " And since we're setting things up on a new system, let's check whether you
+    " want us to download the spell files too.
+    set spell
+    set nospell
+  catch /E739:/
+    " We're probably booting nvim from a process that couldn't create the
+    " directory if it wanted to. Ignore.
+    " (We'll get error messages when trying to save w/out a backup to notify
+    " us that something's wrong.)
+  endtry
 endif
 let &backupdir = s:backupdir
 unlet s:backupdir
@@ -145,11 +149,13 @@ let g:base16_color_overrides = {
 
 " Changes to the base theme
 let g:base16_color_modifiers = {
-			\ 'Comment': 'fg=similar1'}
+      \ 'Comment': 'fg=similar1'}
 
 " Hacks to prevent me from writing my own syntax files
 call extend(g:base16_color_overrides, {
-			\ 'vimCommentTitle': 'fg=yellow italic'})
+      \ 'vimCommentTitle': 'fg=yellow italic',
+      \ 'ALEErrorSign': 'fg=red bg=similar3 bold',
+      \ 'ALEWarningSign': 'fg=orange bg=similar3 bold'})
 
 Plug 'Soares/base16.nvim'
 
@@ -201,44 +207,64 @@ Plug 'tpope/vim-fugitive'
 
 " ----------------------------------------------------------------------------
 " Terminal emulator management -----------------------------------------------
-" TODO: There's a lot of overlap between by <C-B> commands and by <C-W>
-" commands these days, it's probably possible to compress w/out losing much
-" and regain one of the two namespaces.
 tnoremap <ESC> <C-\><C-n>
 tnoremap <C-B>x <ESC>
 tnoremap <C-B><C-B> <C-B>
 tnoremap <C-B><C-P> <C-\><C-n>:normal "+pa<CR>
 
-function! s:nvimux(key, command, modes)
-	for l:mode in split(a:modes, '\zs')
-		let l:exit = (l:mode == 't') ? '<C-\><C-n>' : (l:mode == 'i') ? '<ESC>' : ''
-		execute l:mode.'noremap' '<silent>' '<C-B>'.a:key l:exit.a:command
-	endfor
+function! s:SmartSwitch()
+  if &buftype == 'terminal' && bufexists(0)
+    call feedkeys("\<C-^>", 'n')
+  elseif &buftype == 'terminal'
+    normal a
+  elseif bufname('#') =~# '^term://'
+    " TODO: change this to
+    " call feedkeys("\<C-^>", 'n')
+    " after the bug listed here:
+    " https://github.com/neovim/neovim/issues/5667
+    " gets fixed.
+    terminal
+    " In the meantime, we'll spawn more terms than we need.
+  else
+    terminal
+  endif
 endfunction
 
-call s:nvimux('t', ':$tabnew<CR>', 'nvit')
-call s:nvimux('v', ':vnew<CR>', 'nvit')
-call s:nvimux('s', ':new<CR>', 'nvit')
-for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-	call s:nvimux(s:i, s:i.'gt', 'nvit')
-endfor
-call s:nvimux('n', 'gt', 'nvit')
-call s:nvimux('p', 'gT', 'nvit')
-call s:nvimux('h', '<C-w><C-h>', 'nvit')
-call s:nvimux('j', '<C-w><C-j>', 'nvit')
-call s:nvimux('k', '<C-w><C-k>', 'nvit')
-call s:nvimux('l', '<C-w><C-l>', 'nvit')
-call s:nvimux('<space>', ':terminal<CR>', 'nvi')
+function! s:nvimux(key, command)
+  for l:mode in split('nvit', '\zs')
+    let l:exit = (l:mode == 't') ? '<C-\><C-n>' : (l:mode == 'i') ? '<ESC>' : ''
+    execute l:mode.'noremap' '<silent>' '<C-B>'.a:key l:exit.a:command
+  endfor
+endfunction
 
-augroup nvimux
-	autocmd!
-	autocmd TermClose * bd!
-  autocmd BufWinEnter,WinEnter term://* startinsert
-  autocmd BufLeave term://* stopinsert
-augroup end
+call s:nvimux('a', '<C-^>')
+call s:nvimux('t', ':$tabnew<CR>')
+call s:nvimux('v', ':vnew<CR>')
+call s:nvimux('s', ':new<CR>')
+for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  call s:nvimux(s:i, s:i.'gt')
+endfor
+call s:nvimux('n', 'gt')
+call s:nvimux('p', 'gT')
+call s:nvimux('h', '<C-w><C-h>')
+call s:nvimux('j', '<C-w><C-j>')
+call s:nvimux('k', '<C-w><C-k>')
+call s:nvimux('l', '<C-w><C-l>')
+call s:nvimux('<space>', ':call <SID>SmartSwitch()<CR>')
 
 unlet s:i
 delfunction s:nvimux
+
+augroup nvimux
+  autocmd!
+  " FZF handles closing itself.
+  " (You'd think we could just bd! and not worry about it, but bd! works
+  " differently depending on whether we're editing a directory or some other
+  " file. Argh.
+  autocmd TermClose * if bufname('%') !~# '^term://.*/fzf\>' | bd! | endif
+  autocmd BufWinEnter,WinEnter term://* startinsert
+  autocmd BufLeave term://* stopinsert
+augroup end
 
 
 " ----------------------------------------------------------------------------
@@ -267,11 +293,24 @@ noremap <leader>eft :FZFFiletypes<CR>
 imap <c-g><c-g> <plug>(fzf-complete-path)
 augroup so8res_fzf
   autocmd!
-  autocmd BufLeave term://*/fzf* bd!
+"  autocmd TermClose term://*/fzf* echomsg 'fzf too!' | bd!
   autocmd FileType fzf :tnoremap <buffer> <ESC> <C-G>
 augroup end
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+let g:fzf_colors = {
+    \ 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Identifier'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Identifier'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'prompt':  ['fg', 'PreProc'],
+    \ 'pointer': ['fg', 'PreProc'],
+    \ 'marker':  ['fg', 'Constant'],
+    \ 'spinner': ['fg', 'Constant'],
+    \ 'header':  ['fg', 'Comment'] }
+Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 
@@ -288,39 +327,18 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " Linting --------------------------------------------------------------------
 noremap <silent> <leader>lo :execute empty(getloclist(0)) ? 'copen' : 'lopen'<CR>
 noremap <silent> <leader>lc :execute empty(getloclist(0)) ? 'cclose' : 'lclose'<CR>
-noremap <silent> <leader>ll :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
-noremap <silent> <leader>ln :execute empty(getloclist(0)) ? 'cnext' : 'lnext'<CR>
-noremap <silent> <leader>lp :execute empty(getloclist(0)) ? 'cprev' : 'cprev'<CR>
-noremap <silent> <leader>li :Neomake<CR>
-let g:neomake_javascript_enabled_makers = ['eslint']
-" Add '--ignore=ENNN,ENNN,WNNN,...' as an element of args to disable certain warnings.
-let g:neomake_python_flake8_maker = {
-    \ 'args': ['--format=default'],
-    \ 'errorformat':
-        \ '%E%f:%l: could not compile,%-Z%p^,' .
-        \ '%A%f:%l:%c: %t%n %m,' .
-        \ '%A%f:%l: %t%n %m,' .
-        \ '%-G%.%#'}
-let g:neomake_python_enabled_makers = ['flake8']
-let g:neomake_haskell_ghcmod_maker = {
-    \ 'exe': 'ghc-mod',
-    \ 'args': ['check'],
-    \ 'errorformat': 
-        \ '%-G%\s%#,' .
-        \ '%f:%l:%c:%trror: %m,' .
-        \ '%f:%l:%c:%tarning: %m,'.
-        \ '%f:%l:%c: %trror: %m,' .
-        \ '%f:%l:%c: %tarning: %m,' .
-        \ '%f:%l:%c:%m,' .
-        \ '%E%f:%l:%c:,' .
-        \ '%Z%m'}
-let g:neomake_haskell_hlint_maker = {
-    \ 'errorformat':
-        \ '%E%f:%l:%v: Error: %m,' .
-        \ '%W%f:%l:%v: Warning: %m,' .
-        \ '%C%m'}
-let g:neomake_haskell_enabled_makers = ['ghcmod', 'hlint']
-Plug 'neomake/neomake'
+noremap <silent> <leader>lg :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
+nmap <silent> <leader>ll <Plug>(ale_next_wrap)
+nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
+" let g:ale_lint_on_save = 1
+" let g:ale_lint_on_text_changed = 0
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
+" TODO: set 'haskell' to 'all' when the bug mentioned here:
+" https://github.com/w0rp/ale/issues/188
+" is fixed.
+let g:ale_linters = {'haskell': ['hlint']}
+Plug 'w0rp/ale'
 
 
 " ----------------------------------------------------------------------------
@@ -338,7 +356,7 @@ function! s:SetupDirvish()
   " Add tab mappings
   nnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
   xnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
-	" Local cd into the directory we're editing
+  " Local cd into the directory we're editing
   lcd %
 endfun
 
@@ -373,18 +391,18 @@ Plug 'justinmk/vim-dirvish'
 " ----------------------------------------------------------------------------
 " Handling view files --------------------------------------------------------
 function! s:MakeViewCheck()
-	" Here's a whole bunch of ways that we could fail to want a view file.
-	" (To prevent an individual buffer from getting a view,
-	" let b:makeviewfile = 0.)
-	if &l:diff | return 0 | endif
-	if &buftype != '' | return 0 | endif
-	if expand('%') =~ '\[.*\]' | return 0 | endif
-	if empty(glob(expand('%:p'))) | return 0 | endif
-	if &modifiable == 0 | return 0 | endif
-	if len($TEMP) && expand('%:p:h') == $TEMP | return 0 | endif
-	if len($TMP) && expand('%:p:h') == $TMP | return 0 | endif
-	if exists('b:makeviewfile') && !b:makeviewfile | return 0 | endif
-	return 1
+  " Here's a whole bunch of ways that we could fail to want a view file.
+  " (To prevent an individual buffer from getting a view,
+  " let b:makeviewfile = 0.)
+  if &l:diff | return 0 | endif
+  if &buftype != '' | return 0 | endif
+  if expand('%') =~ '\[.*\]' | return 0 | endif
+  if empty(glob(expand('%:p'))) | return 0 | endif
+  if &modifiable == 0 | return 0 | endif
+  if len($TEMP) && expand('%:p:h') == $TEMP | return 0 | endif
+  if len($TMP) && expand('%:p:h') == $TMP | return 0 | endif
+  if exists('b:makeviewfile') && !b:makeviewfile | return 0 | endif
+  return 1
 endfunction
 
 augroup makeviewfile
@@ -415,7 +433,7 @@ function! s:executeQuickFixBindings()
 endfunction
 
 augroup quickfix
-	autocmd!
+  autocmd!
   autocmd FileType qf call <SID>executeQuickFixBindings()
 augroup end
 
@@ -439,10 +457,10 @@ execute 'noremap <leader>gi :call <SID>Go("'.expand('<sfile>:p').'")<CR>'
 execute 'noremap <leader>gn :call <SID>Go("'.expand('<sfile>:p:h').'")<CR>'
 
 if isdirectory(expand('~/Downloads'))
-	noremap <leader>gd :call <SID>Go('~/Downloads')<CR>
+  noremap <leader>gd :call <SID>Go('~/Downloads')<CR>
 endif
 if isdirectory(expand('~/Dropbox'))
-	noremap <leader>gx :call <SID>Go('~/Dropbox')<CR>
+  noremap <leader>gx :call <SID>Go('~/Dropbox')<CR>
 endif
 noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]ownloads ǁ dropbo[x]"<CR>
 
@@ -452,5 +470,5 @@ call plug#end()
 " ============================================================================
 " Turn everything on and let's roll. =========================================
 filetype plugin indent on
-set background=dark
-colorscheme redscreen
+set background=light
+colorscheme summerfruit

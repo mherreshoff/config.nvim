@@ -4,6 +4,50 @@
 set laststatus=2
 set statusline=
 
+function! g:StatuslineLintErr()
+  if !exists('g:loaded_ale')
+    return ''
+  endif
+  let l:buffer = bufnr('%')
+  let [l:err, l:warn] = ale#statusline#Count(l:buffer)
+  if l:err > 0 && l:warn == 0
+    return printf('[%sE]', l:err)
+  elseif l:err > 0
+    return printf('%sE]', l:err)
+  endif
+  return ''
+endfunction
+
+function! g:StatuslineLintWarn()
+  if !exists('g:loaded_ale')
+    return ''
+  endif
+  let l:buffer = bufnr('%')
+  let [l:err, l:warn] = ale#statusline#Count(l:buffer)
+  if l:warn > 0 && l:err == 0
+    return printf('[%sW]', l:warn)
+  elseif l:warn > 0
+    return printf('[%sW|', l:warn)
+  endif
+  return ''
+endfunction
+
+function! g:StatuslineLintOK()
+  if !exists('g:loaded_ale')
+    return ''
+  endif
+  let l:buffer = bufnr('%')
+  if !has_key(g:ale_buffer_info, l:buffer)
+    return ''
+  endif
+  let [l:err, l:warn] = ale#statusline#Count(l:buffer)
+  if l:err == 0 && l:warn == 0
+    return '[OK]'
+  endif
+  return ''
+endfunction
+
+
 
 set statusline+=%#sbNormal#
 " cwd
@@ -21,6 +65,8 @@ set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
 set statusline+=%{exists('g:loaded_viewport')?viewport#status#info():''}
 " Session tracking
 set statusline+=%{exists('g:loaded_obsession')?ObsessionStatus():''}
+" Let me know if linting is looking good
+set statusline+=%{StatuslineLintOK()}
 " Current indentation, if sane
 set statusline+=%{exists('g:loaded_tabloid')?tabloid#status#info():''}
 
@@ -49,11 +95,13 @@ set statusline+=%{exists('g:loaded_trailguide')?trailguide#status#warning():''}
 set statusline+=%{exists('g:loaded_longline')?longline#status#warning():''}
 
 
+" Linter has warnings. Should be immediately before linter errors.
+set statusline+=%{StatuslineLintWarn()}
+
+
 set statusline+=%#sbError#
-" Tabbing is set incorrectly
-set statusline+=%{exists('g:loaded_tabloid')?tabloid#status#error():''}
-" Errors detected
-set statusline+=%{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
+" Linter has errors
+set statusline+=%{StatuslineLintErr()}
 
 
 " Reset style.

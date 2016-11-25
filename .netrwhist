@@ -1,3 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
+let g:netrw_dirhist_cnt =4
 let g:netrw_dirhist_1='/Users/nate/.config/nvim/packages/trailguide.vim/plugin'
+let g:netrw_dirhist_2='/Users/nate'
+let g:netrw_dirhist_3='/Users/nate/.config/nvim'
+let g:netrw_dirhist_4='/Users/nate/.config'
