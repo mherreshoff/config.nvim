@@ -1,4 +1,3 @@
-" TODO: Turn these into ftplugins.
 augroup filetypes
 	autocmd!
 	autocmd BufNewFile,BufRead *.cabal set et sw=2 ts=2 sts=2

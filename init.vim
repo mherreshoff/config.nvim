@@ -1,123 +1,171 @@
-" Remappings
+" ============================================================================
+" Remappings =================================================================
+" Get to ex mode slightly faster:
+noremap ; :
+" Get to ex-mode-in-vim ever:
+noremap : :<c-f>
+" A convenient leader key for dvorak users:
+let mapleader=','
+" ; and , have now lost their homes. Let's find new ones:
+noremap - ;
+noremap _ ,
+" The marks that are exact (rather than line-level) should be easier to type:
 noremap ' `
 noremap ` '
-
-let mapleader=","
-noremap _ ,
-noremap - ;
+" <C-B> will be used for tmux emulation, more or less.
 nnoremap <C-B> <NOP>
+" These make it easier to indent / unindent using visual mode:
 vnoremap < <gv
 vnoremap > >gv
+" This makes it harder to lose work via accidental <C-U>.
+inoremap <C-U> <C-G>u<C-U>
+" Lets us add lines w/out staying in insert mode.
+nnoremap <CR> o
 
-noremap ; :
-noremap : :<c-f>
 
-" Basic settings:
-set autoindent                  " Copy indent from current line.
-set backspace=indent,eol,start  " Make backspace sane.
-set backup                      " Always be safe.
-set breakindent                 " Wrap indented lines better
-set cursorline                  " Highlight the current line.
-set formatoptions=cqn1j         " see :help fo-table.
-set gdefault                    " Replace globally by default.
-set hidden                      " Allow buffer backgrounding.
-set history=1000                " Remember a lot
-set incsearch                   " Search incrementally as I type.
-set nocindent nosmartindent     " Because we're autoindenting!
-set nohls                       " Highlighting searches by default is annoying.
-set notimeout                   " I dislike ambiguous mapping,
+" ============================================================================
+" Basic settings =============================================================
+set autoindent                    " Copy indent from current line.
+set backspace=indent,eol,start    " Make backspace sane.
+set backup                        " Always be safe.
+set breakindent                   " Wrap indented lines better
+set cursorline                    " Highlight the current line.
+set formatoptions=cqn1j           " see :help fo-table.
+set gdefault                      " Replace globally by default.
+set hidden                        " Allow buffer backgrounding.
+set history=1000                  " Remember a lot
+set incsearch                     " Search incrementally as I type.
+set nocindent nosmartindent       " Because we're autoindenting!
+set nohls                         " Highlighting searches by default is annoying.
 noremap <leader>? :set invhls<CR>
-set number                      " Make the current line show absolutely.
-set relativenumber              " Make line numbers cursor-relative.
-set scrolloff=3                 " Add top/bottom scroll margins.
-set showcmd                     " Show the last command.
-set showmatch                   " When a bracket is typed show its match.
-set showtabline=0               " Just use :tabs and buffers.
-set smartcase ignorecase        " Ignore case unless there are cased characters.
-set smarttab                    " Shiftwidth is only for indents.
-set splitbelow splitright       " Windows should split in the direction I read.
-set undofile                    " Undo across sessions.
-set viewoptions+=unix,slash     " Make windows views compatible.
-set viewoptions=cursor,folds    " Save fold & cursor locations.
-set visualbell                  " Don't make noise.
-set wildmenu                    " Enhanced completion.
-set wildmode=list:longest       " Act like shell completion.
-set winminheight=0              " Squish windows as much as you like.
-set mouse=a
+set notimeout                     " I dislike ambiguous mappings
+set number                        " Make the current line show absolutely.
+set relativenumber                " Make line numbers cursor-relative.
+set scrolloff=3                   " Add top/bottom scroll margins.
+set showcmd                       " Show the last command.
+set showmatch                     " When a bracket is typed show its match.
+set showtabline=0                 " Just use :tabs and buffers.
+set smartcase ignorecase          " Ignore case unless there are cased characters.
+set smarttab                      " Shiftwidth is only for indents.
+set splitbelow splitright         " Windows should split in the direction I read.
+set undofile                      " Undo across sessions.
+set viewoptions+=unix,slash       " Make windows views compatible.
+set viewoptions=cursor,folds      " Save fold & cursor locations.
+set visualbell                    " Don't make noise.
+set winminheight=0                " Squish windows as much as you like.
+set mouse=a                       " Allow mouse interactions.
+set termguicolors                 " Use real colors.
 
-" Hidden Character handling:
+
+" ============================================================================
+" Vim command line file navigation ===========================================
+set nowildmenu
+set wildignore=*.aux,*.bak,*.class,*.dll,*.exe,*.gif,*.jpeg,*.jpg,*.png,*.o,*.pyc,dist/**,tags
+set wildmode=list:longest
+" Note: if you want to turn the wildmode on, and you want to cnoremap the <Up>
+" and <Down> keys, recall that it's hard to remap <Down>, and read
+" stackoverflow.com/questions/14842987
+
+
+" ============================================================================
+" Tab management =============================================================
+" Note that some indent files, which use &sw instead of shiftwidth(), will
+" break with these settings. If you're having trouble, consider changing these
+" all to 2 or whatever.
+set tabstop=2
+set shiftwidth=0                  " Now the shiftwidth() function will use &tabstop
+set softtabstop=-1                " Use the shiftwidth
+set noexpandtab                   " Use tabs by default
+
+
+" ============================================================================
+" Hidden characters ==========================================================
 set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
 noremap <leader>h :set list!<CR>
 
-" Tab handling
-set tabstop=2       " A sensible default.
-set shiftwidth=2    " Sure would be nice if we could set this to 0.
-set softtabstop=2   " (And this to -1.) I think it's a vim syntax files problem.
-set expandtab
 
+" ============================================================================
+" Neovim global variables (ugh) ==============================================
 let g:terminal_scrollback_buffer_size = 2147483647
 
-" Quickfix and location list behavior:
-function! s:executeQuickFixBindings()
-  let l:matches_window_prefix = empty(getloclist(0)) ? 'c' : 'l'
-  " from ag.vim
-  nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
-  nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
-  nnoremap <silent> <buffer> o  <CR>
-  nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
-  nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
-  nnoremap <silent> <buffer> v  <C-w><CR><C-w>H
 
-  exe 'nnoremap <silent> <buffer> e <CR><C-w><C-w>:' . l:matches_window_prefix .'close<CR>'
-  exe 'nnoremap <silent> <buffer> go <CR>:' . l:matches_window_prefix . 'open<CR>'
-  exe 'nnoremap <silent> <buffer> q  :' . l:matches_window_prefix . 'close<CR>'
-  exe 'nnoremap <silent> <buffer> gv <C-w><CR><C-w>H:' . l:matches_window_prefix . 'open<CR><C-w>J'
-  exe 'autocmd BufLeave <buffer> ' . l:matches_window_prefix . 'close'
-endfunction
-augroup quickfix
-	autocmd!
-  autocmd FileType qf call <SID>executeQuickFixBindings()
-augroup end
-
-
-" Ignored Filetypes:
-let wildignore = join([
-\	'*.aux',
-\	'*.bak',
-\	'*.class',
-\	'*.dll',
-\	'*.exe',
-\	'*.gif',
-\	'*.jpeg',
-\	'*.jpg',
-\	'*.o',
-\	'*.png',
-\	'*.pyc',
-\	'dist/**',
-\	'tags',
-\	], ',')
-
-" Metadata Storage:
+" Metadata storage -----------------------------------------------------------
 set viewdir=~/.local/share/nvim/view
-set backupdir=~/.local/share/nvim/backup
-set viminfo=\"4,'100,/100,:100,h,f1
+set shada=%,'100,<50,s10
 
-" Plugin Management:
+" Nvim needs us to make this directory on our own:
+let s:backupdir = expand('~/.local/share/nvim/backup')
+if !isdirectory(s:backupdir)
+	echomsg 'Creating backup directory.'
+	call mkdir(s:backupdir, 'p')
+	" And since we're setting things up on a new system, let's check whether you
+	" want us to download the spell files too.
+	set spell
+	set nospell
+endif
+let &backupdir = s:backupdir
+unlet s:backupdir
+
+
+" ============================================================================
+" Plugin time! ===============================================================
+" Not everything below will actually be plugins. What you'll actually find is
+" a lot of functionality that I want, some of which can be found in plugins,
+" many of which need lots of configuration.
 call plug#begin('~/.config/nvim/packages')
+
+
+" ----------------------------------------------------------------------------
+" Real basic vim functionality -----------------------------------------------
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'Soares/eunuch.vim'
+" Plug 'tpope/vim-obsession'  -- I'm rusty on this one and need to spend some time with it.
+
+
+" ----------------------------------------------------------------------------
+" Color management -----------------------------------------------------------
+" If and when you get a transparent terminal, turn this on.
+let g:base16_transparent_background = 0
+
+" Personal color groups:
+let g:base16_color_overrides = {
+      \ 'sbError': 'fg=dark3 bg=red bold',
+      \ 'sbWarning': 'fg=dark3 bg=orange',
+      \ 'sbNotify': 'fg=dark3 bg=yellow',
+      \ 'sbOk': 'fg=dark3 bg=green'}
+
+" Changes to the base theme
+let g:base16_color_modifiers = {
+			\ 'Comment': 'fg=similar1'}
+
+" Hacks to prevent me from writing my own syntax files
+call extend(g:base16_color_overrides, {
+			\ 'vimCommentTitle': 'fg=yellow italic'})
 
 Plug 'Soares/base16.nvim'
 
+
+" ----------------------------------------------------------------------------
+" A whole bunch of filetype extensions ---------------------------------------
+" Some are disabled by default, but vetted. Enable if you'd like.
 Plug 'Soares/fish.vim'
+
 Plug 'tpope/vim-markdown'
+
 let g:vimtex_imaps_enabled = 0
 Plug 'lervag/vimtex'
 
-" Plug 'Soares/trailguide.vim'
+" Plug 'derekelkins/agda-vim'
+
+
+" ----------------------------------------------------------------------------
+" Opinionated plugins that I use regularly -----------------------------------
 let g:write_auto = ['text', 'markdown', 'tex', 'help!']
 noremap <leader>w :Write<CR>
 Plug 'Soares/write.vim'
-execute 'noremap <leader>a :Ag '
-Plug 'rking/ag.vim'
+
 noremap <leader>bd :Bclose<CR>
 noremap <leader>bD :Bclose!<CR>
 noremap <leader>bn :bn<CR>
@@ -125,29 +173,71 @@ noremap <leader>bp :bp<CR>
 noremap <leader>bl :ls<CR>
 noremap <leader>bt :b#<CR>
 Plug 'Soares/butane.vim'
-Plug 'Soares/eunuch.vim'
-Plug 'Soares/nvimux.vim'
 
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
+execute 'noremap <leader>a :Ag '
+Plug 'rking/ag.vim'
+
+let g:rooter_silent_chdir = 1
+Plug 'airblade/vim-rooter'
+
+let g:gutentags_cache_dir = '~/.cache/tags'
+Plug 'ludovicchabant/vim-gutentags'
+
+
+" ----------------------------------------------------------------------------
+" The Land of Version Control ------------------------------------------------
 noremap <leader>gs :Gstatus<CR>
 noremap <leader>gc :Gcommit<CR>
 noremap <leader>gu :Git push origin master<CR>
 Plug 'tpope/vim-fugitive'
 
-noremap <leader>cp :pwd<CR>
-noremap <leader>cd :lcd %:h<CR>:pwd<CR>
-noremap <leader>cg :execute 'edit' getcwd()<CR>
-noremap <leader>cc :e %:h<CR>
-" augroup so8res_dirvish
-"   autocmd!
-"   autocmd FileType dirvish silent lcd %
-" augroup end
-Plug 'justinmk/vim-dirvish'
 
-execute 'noremap <leader>ed :Files '
+" ----------------------------------------------------------------------------
+" Terminal emulator management -----------------------------------------------
+" TODO: There's a lot of overlap between by <C-B> commands and by <C-W>
+" commands these days, it's probably possible to compress w/out losing much
+" and regain one of the two namespaces.
+tnoremap <ESC> <C-\><C-n>
+tnoremap <C-B>x <ESC>
+tnoremap <C-B><C-B> <C-B>
+tnoremap <C-B><C-P> <C-\><C-n>:normal "+pa<CR>
+
+function! s:nvimux(key, command, modes)
+	for l:mode in split(a:modes, '\zs')
+		let l:exit = (l:mode == 't') ? '<C-\><C-n>' : (l:mode == 'i') ? '<ESC>' : ''
+		execute l:mode.'noremap' '<silent>' '<C-B>'.a:key l:exit.a:command
+	endfor
+endfunction
+
+call s:nvimux('t', ':$tabnew<CR>', 'nvit')
+call s:nvimux('v', ':vnew<CR>', 'nvit')
+call s:nvimux('s', ':new<CR>', 'nvit')
+for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	call s:nvimux(s:i, s:i.'gt', 'nvit')
+endfor
+call s:nvimux('n', 'gt', 'nvit')
+call s:nvimux('p', 'gT', 'nvit')
+call s:nvimux('h', '<C-w><C-h>', 'nvit')
+call s:nvimux('j', '<C-w><C-j>', 'nvit')
+call s:nvimux('k', '<C-w><C-k>', 'nvit')
+call s:nvimux('l', '<C-w><C-l>', 'nvit')
+call s:nvimux('<space>', ':terminal<CR>', 'nvi')
+
+augroup nvimux
+	autocmd!
+	autocmd TermClose * bd!
+  autocmd BufWinEnter,WinEnter term://* startinsert
+  autocmd BufLeave term://* stopinsert
+augroup end
+
+unlet s:i
+delfunction s:nvimux
+
+
+" ----------------------------------------------------------------------------
+" Fuzzy finding for navigation and great profit ------------------------------
 let g:fzf_command_prefix = 'FZF'
+let g:fzf_action = {'ctrl-t': 'tab split', 'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
 noremap <leader>o :FZFFiles<CR>
 noremap <leader>eb :FZFBuffers<CR>
 noremap <leader>eco :FZFColors<CR>
@@ -166,9 +256,8 @@ noremap <leader>eg :FZFCommits<CR>
 noremap <leader>eG :FZFBCommits<CR>
 noremap <leader>e? :FZFHelptags<CR>
 noremap <leader>eft :FZFFiletypes<CR>
-let g:fzf_action = {'ctrl-t': 'tab split', 'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
-imap <c-g><c-g> <plug>(fzf-complete-word)
-imap <c-g><c-p> <plug>(fzf-complete-path)
+" Reminder: you may also want to look into <plug>(fzf-complete-word).
+imap <c-g><c-g> <plug>(fzf-complete-path)
 augroup so8res_fzf
   autocmd!
   autocmd BufLeave term://*/fzf* bd!
@@ -178,50 +267,183 @@ let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-" Plug 'tpope/vim-obsession'
-" Plug 'Soares/longline.vim'
-" Plug 'Soares/tabdiff.vim'
-" Plug 'tommcdo/vim-exchange'
-" Plug 'derekelkins/agda-vim'
-" Plug 'ludovicchabant/vim-gutentags'
 
-" autocds to project directory (as identified e.g. by a .git dir)
-let g:rooter_silent_chdir = 1
-Plug 'airblade/vim-rooter'
-
+" ----------------------------------------------------------------------------
+" Fuzzy completion while writing code ----------------------------------------
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 inoremap <silent><expr> <C-e> pumvisible() ? "\<C-n>" : deoplete#mappings#manual_complete()
 inoremap <silent><expr> <CR> pumvisible() ? deoplete#mappings#close_popup()."\<CR>" : "\<CR>"
-execute 'inoremap <silent> <C-@> <C-n> '
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-let g:gutentags_cache_dir = '~/.cache/tags'
-Plug 'ludovicchabant/vim-gutentags'
 
-let g:neomake_javascript_enabled_makers = ['eslint']
+" ----------------------------------------------------------------------------
+" Linting --------------------------------------------------------------------
 noremap <silent> <leader>lo :execute empty(getloclist(0)) ? 'copen' : 'lopen'<CR>
 noremap <silent> <leader>lc :execute empty(getloclist(0)) ? 'cclose' : 'lclose'<CR>
 noremap <silent> <leader>ll :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
 noremap <silent> <leader>ln :execute empty(getloclist(0)) ? 'cnext' : 'lnext'<CR>
 noremap <silent> <leader>lp :execute empty(getloclist(0)) ? 'cprev' : 'cprev'<CR>
-noremap <silent> <leader>li :Neomake<CR>                      " Lint.
-" autocmd! BufWritePost,BufEnter * Neomake
+noremap <silent> <leader>li :Neomake<CR>
+let g:neomake_javascript_enabled_makers = ['eslint']
+" Add '--ignore=ENNN,ENNN,WNNN,...' as an element of args to disable certain warnings.
+let g:neomake_python_flake8_maker = {
+    \ 'args': ['--format=default'],
+    \ 'errorformat':
+        \ '%E%f:%l: could not compile,%-Z%p^,' .
+        \ '%A%f:%l:%c: %t%n %m,' .
+        \ '%A%f:%l: %t%n %m,' .
+        \ '%-G%.%#'}
+let g:neomake_python_enabled_makers = ['flake8']
+let g:neomake_haskell_ghcmod_maker = {
+    \ 'exe': 'ghc-mod',
+    \ 'args': ['check'],
+    \ 'errorformat': 
+        \ '%-G%\s%#,' .
+        \ '%f:%l:%c:%trror: %m,' .
+        \ '%f:%l:%c:%tarning: %m,'.
+        \ '%f:%l:%c: %trror: %m,' .
+        \ '%f:%l:%c: %tarning: %m,' .
+        \ '%f:%l:%c:%m,' .
+        \ '%E%f:%l:%c:,' .
+        \ '%Z%m'}
+let g:neomake_haskell_hlint_maker = {
+    \ 'errorformat':
+        \ '%E%f:%l:%v: Error: %m,' .
+        \ '%W%f:%l:%v: Warning: %m,' .
+        \ '%C%m'}
+let g:neomake_haskell_enabled_makers = ['ghcmod', 'hlint']
 Plug 'neomake/neomake'
+
+
+" ----------------------------------------------------------------------------
+" Editing directories --------------------------------------------------------
+noremap <leader>cp :pwd<CR>
+noremap <leader>cd :lcd %:h<CR>:pwd<CR>
+noremap <leader>cc :e %:h<CR>
+noremap <leader>cg :execute 'edit' getcwd()<CR>
+
+function! s:SetupDirvish()
+  " Hide dot-files by default
+  call s:ToggleDotfiles()
+  " Map gh to toggle showing hidden files
+  nnoremap <buffer> gh :call <SID>ToggleDotfiles()<CR>
+  " Add tab mappings
+  nnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
+  xnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
+	" Local cd into the directory we're editing
+  lcd %
+endfun
+
+function! s:ToggleDotfiles()
+    if &filetype != 'dirvish' | return | endif
+    let l:line = line('.')
+    " Store dotfiles in b:dotfiles and remove
+    if !exists('b:dotfiles')
+        let l:h = @h
+        let @h = ''
+        silent! g@\v/\.[^\/]+/?$@y H
+        silent! g//d _
+        let b:dotfiles = split(@h, '\n')
+        let @h = l:h
+        execute ':' . string(max([0, l:line - len(b:dotfiles)]))
+    " Re-add b:dotfiles to the top
+    else
+        call append(0, b:dotfiles)
+        execute ':' . (l:line + len(b:dotfiles))
+        unlet b:dotfiles
+    endif
+endfunction
+
+augroup dirvishsetup
+    autocmd!
+    autocmd FileType dirvish call s:SetupDirvish()
+augroup END
+
+Plug 'justinmk/vim-dirvish'
+
+
+" ----------------------------------------------------------------------------
+" Handling view files --------------------------------------------------------
+function! s:MakeViewCheck()
+	" Here's a whole bunch of ways that we could fail to want a view file.
+	" (To prevent an individual buffer from getting a view,
+	" let b:makeviewfile = 0.)
+	if &l:diff | return 0 | endif
+	if &buftype != '' | return 0 | endif
+	if expand('%') =~ '\[.*\]' | return 0 | endif
+	if empty(glob(expand('%:p'))) | return 0 | endif
+	if &modifiable == 0 | return 0 | endif
+	if len($TEMP) && expand('%:p:h') == $TEMP | return 0 | endif
+	if len($TMP) && expand('%:p:h') == $TMP | return 0 | endif
+	if exists('b:makeviewfile') && !b:makeviewfile | return 0 | endif
+	return 1
+endfunction
+
+augroup makeviewfile
+    autocmd!
+    " Autosave & Load Views.
+    autocmd BufWritePre,BufWinLeave ?* if <SID>MakeViewCheck() | silent! mkview | endif
+    autocmd BufWinEnter ?* if <SID>MakeViewCheck() | silent! loadview | endif
+augroup END
+
+
+" ----------------------------------------------------------------------------
+" Quickfix and location list manipulation ------------------------------------
+function! s:executeQuickFixBindings()
+  let l:matches_window_prefix = empty(getloclist(0)) ? 'c' : 'l'
+  " from ag.vim
+  nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
+  nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
+  nnoremap <silent> <buffer> o  <CR>
+  nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
+  nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
+  nnoremap <silent> <buffer> v  <C-w><CR><C-w>H
+
+  exe 'nnoremap <silent> <buffer> e <CR><C-w><C-w>:' . l:matches_window_prefix .'close<CR>'
+  exe 'nnoremap <silent> <buffer> go <CR>:' . l:matches_window_prefix . 'open<CR>'
+  exe 'nnoremap <silent> <buffer> q  :' . l:matches_window_prefix . 'close<CR>'
+  exe 'nnoremap <silent> <buffer> gv <C-w><CR><C-w>H:' . l:matches_window_prefix . 'open<CR><C-w>J'
+  exe 'autocmd BufLeave <buffer> ' . l:matches_window_prefix . 'close'
+endfunction
+
+augroup quickfix
+	autocmd!
+  autocmd FileType qf call <SID>executeQuickFixBindings()
+augroup end
+
+
+" ----------------------------------------------------------------------------
+" Custom navigation shortcuts ------------------------------------------------
+function! s:Go(place)
+  execute 'edit' a:place
+  if isdirectory(a:place)
+    lcd %
+  else
+    lcd %:h
+  endif
+endfunction
+
+" ,gh takes you home.
+" ,gi takes you to your init.vim file.
+" ,gn takes you to the directory in which your neovim config lives.
+noremap <leader>gh :call <SID>Go('~/')<CR>
+execute 'noremap <leader>gi :call <SID>Go("'.expand('<sfile>:p').'")<CR>'
+execute 'noremap <leader>gn :call <SID>Go("'.expand('<sfile>:p:h').'")<CR>'
+
+if isdirectory(expand('~/Downloads'))
+	noremap <leader>gd :call <SID>Go('~/Downloads')<CR>
+endif
+if isdirectory(expand('~/Dropbox'))
+	noremap <leader>gx :call <SID>Go('~/Dropbox')<CR>
+endif
+noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]ownloads ǁ dropbo[x]"<CR>
 
 call plug#end()
 
-filetype plugin indent on
 
-set termguicolors
-set background=dark
-let g:base16_transparent_background = 0
-let g:base16_color_overrides = {
-      \ 'sbError': 'fg=dark3 bg=red bold',
-      \ 'sbWarning': 'fg=dark3 bg=orange',
-      \ 'sbNotify': 'fg=dark3 bg=yellow',
-      \ 'sbOk': 'fg=dark3 bg=green'}
-let g:base16_color_modifiers = {
-      \ 'Comment': 'fg=similar1'}
-colorscheme summerfruit
+" ============================================================================
+" Turn everything on and let's roll. =========================================
+filetype plugin indent on
+set background=light
+colorscheme brewer
