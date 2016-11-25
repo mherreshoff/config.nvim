@@ -137,7 +137,10 @@ Plug 'Soares/eunuch.vim'
 
 " ----------------------------------------------------------------------------
 " Color management -----------------------------------------------------------
-" If and when you get a transparent terminal, turn this on.
+" When the following bug is fixed:
+" https://github.com/neovim/neovim/issues/5668
+" and the terminal has a transparent backgroun, then we can enable this.
+" (we'll need to set base16_shell_path too).
 let g:base16_transparent_background = 0
 
 " Personal color groups:
@@ -329,15 +332,17 @@ noremap <silent> <leader>lc :execute empty(getloclist(0)) ? 'cclose' : 'lclose'<
 noremap <silent> <leader>lg :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
 nmap <silent> <leader>ll <Plug>(ale_next_wrap)
 nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
-" let g:ale_lint_on_save = 1
-" let g:ale_lint_on_text_changed = 0
+
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
 " TODO: set 'haskell' to 'all' when the bug mentioned here:
 " https://github.com/w0rp/ale/issues/188
 " is fixed.
 let g:ale_linters = {'haskell': ['hlint']}
+" Right now, if this is pissing you off, just comment out this line.
 Plug 'w0rp/ale'
+" When https://github.com/w0rp/ale/issues/189 is fixed, we'll bind ,lq to
+" toggle the linter or whatever.
 
 
 " ----------------------------------------------------------------------------
