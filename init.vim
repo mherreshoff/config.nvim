@@ -293,7 +293,6 @@ noremap <leader>eft :FZFFiletypes<CR>
 imap <c-g><c-g> <plug>(fzf-complete-path)
 augroup so8res_fzf
   autocmd!
-"  autocmd TermClose term://*/fzf* echomsg 'fzf too!' | bd!
   autocmd FileType fzf :tnoremap <buffer> <ESC> <C-G>
 augroup end
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l'
