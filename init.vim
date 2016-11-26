@@ -134,32 +134,7 @@ Plug 'tpope/vim-surround'
 Plug 'Soares/eunuch.vim'
 " Plug 'tpope/vim-obsession'  -- I'm rusty on this one and need to spend some time with it.
 
-
-" ----------------------------------------------------------------------------
-" Color management -----------------------------------------------------------
-" When the following bug is fixed:
-" https://github.com/neovim/neovim/issues/5668
-" and the terminal has a transparent backgroun, then we can enable this.
-" (we'll need to set base16_shell_path too).
-let g:base16_transparent_background = 0
-
-" Personal color groups:
-let g:base16_color_overrides = {
-      \ 'sbError': 'fg=dark3 bg=red bold',
-      \ 'sbWarning': 'fg=dark3 bg=orange',
-      \ 'sbNotify': 'fg=dark3 bg=yellow',
-      \ 'sbOk': 'fg=dark3 bg=green'}
-
-" Changes to the base theme
-let g:base16_color_modifiers = {
-      \ 'Comment': 'fg=similar1'}
-
-" Hacks to prevent me from writing my own syntax files
-call extend(g:base16_color_overrides, {
-      \ 'vimCommentTitle': 'fg=yellow italic',
-      \ 'ALEErrorSign': 'fg=red bg=similar3 bold',
-      \ 'ALEWarningSign': 'fg=orange bg=similar3 bold'})
-
+" This one is configured down below.
 Plug 'Soares/base16.nvim'
 
 
@@ -299,20 +274,20 @@ augroup so8res_fzf
   autocmd FileType fzf :tnoremap <buffer> <ESC> <C-G>
 augroup end
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l'
-let g:fzf_colors = {
-    \ 'fg':      ['fg', 'Normal'],
-    \ 'bg':      ['bg', 'Normal'],
-    \ 'hl':      ['fg', 'Identifier'],
-    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-    \ 'hl+':     ['fg', 'Identifier'],
-    \ 'info':    ['fg', 'PreProc'],
-    \ 'prompt':  ['fg', 'PreProc'],
-    \ 'pointer': ['fg', 'PreProc'],
-    \ 'marker':  ['fg', 'Constant'],
-    \ 'spinner': ['fg', 'Constant'],
-    \ 'header':  ['fg', 'Comment'] }
-Plug 'junegunn/fzf', { 'dir': '~/.config/fzf', 'do': './install --all' }
+let g:fzf_colors =
+    \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Normal'],
+      \ 'fg+':     ['fg', 'Normal'],
+      \ 'bg+':     ['bg', 'Normal'],
+      \ 'hl+':     ['fg', 'Normal'],
+      \ 'info':    ['fg', 'Statement'],
+      \ 'prompt':  ['fg', 'Statement'],
+      \ 'pointer': ['fg', 'Statement'],
+      \ 'marker':  ['fg', 'Statement'],
+      \ 'spinner': ['fg', 'Statement'],
+      \ 'header':  ['fg', 'Statement'] }
+Plug 'junegunn/fzf', {'dir': '~/.config/fzf', 'do': './install --all'}
 Plug 'junegunn/fzf.vim'
 
 
@@ -468,11 +443,114 @@ if isdirectory(expand('~/Dropbox'))
 endif
 noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]ownloads ǁ dropbo[x]"<CR>
 
+
+" ----------------------------------------------------------------------------
+" Statusline management ------------------------------------------------------
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+Plug 'vim-airline/vim-airline'
+
 call plug#end()
+filetype plugin indent on
 
 
 " ============================================================================
-" Turn everything on and let's roll. =========================================
-filetype plugin indent on
-set background=light
-colorscheme summerfruit
+" Color management ===========================================================
+" When the following bug is fixed:
+" https://github.com/neovim/neovim/issues/5668
+" and the terminal has a transparent backgroun, then we can enable this.
+" (we'll need to set base16_shell_path too).
+let g:base16_transparent_background = 0
+
+" Personal color groups:
+let g:base16_color_overrides = {
+      \ 'sbError': 'fg=dark3 bg=red bold',
+      \ 'sbWarning': 'fg=dark3 bg=orange',
+      \ 'sbNotify': 'fg=dark3 bg=yellow',
+      \ 'sbOk': 'fg=dark3 bg=green'}
+
+" Changes to the base theme
+let g:base16_color_modifiers = {
+      \ 'Comment': 'fg=similar1'}
+
+" Hacks to prevent me from writing my own syntax files
+call extend(g:base16_color_overrides, {
+      \ 'vimCommentTitle': 'fg=yellow italic',
+      \ 'ALEErrorSign': 'fg=red bg=similar3 bold',
+      \ 'ALEWarningSign': 'fg=orange bg=similar3 bold',
+      \ 'fzf1': 'fg=red bg=similar2',
+      \ 'fzf2': 'fg=green bg=similar2',
+      \ 'fzf3': 'fg=yellow bg=similar2'})
+call extend(g:base16_color_modifiers, {
+      \ 'airline_a_inactive_red': 'fg=red',
+      \ 'airline_a_red': 'fg=orange',
+      \ 'airline_a_to_airline_b_inactive_inactive_red': 'fg=red',
+      \ 'airline_a_to_airline_b_red': 'fg=red',
+      \ 'airline_b_inactive_red': 'fg=red',
+      \ 'airline_b_red': 'fg=orange',
+      \ 'airline_b_to_airline_c_inactive_inactive_red': 'fg=red',
+      \ 'airline_b_to_airline_c_red': 'fg=red',
+      \ 'airline_c11_to_airline_x_red': 'fg=red',
+      \ 'airline_c1_inactive_red': 'fg=red',
+      \ 'airline_c1_to_airline_x_inactive_inactive_red': 'fg=red',
+      \ 'airline_c1_to_airline_x_red': 'fg=red',
+      \ 'airline_c_red': 'fg=red',
+      \ 'airline_c_to_airline_x_inactive_inactive_red': 'fg=red',
+      \ 'airline_c_to_airline_x_red': 'fg=red',
+      \ 'airline_error': 'bg=red',
+      \ 'airline_error_bold': 'bg=red',
+      \ 'airline_error_inactive': 'bg=red',
+      \ 'airline_error_inactive_bold': 'bg=red',
+      \ 'airline_error_inactive_red': 'bg=red',
+      \ 'airline_error_red': 'fg=orange bg=red',
+      \ 'airline_tab_left_to_airline_tabsel_left_red': 'fg=red',
+      \ 'airline_tab_right_to_airline_tabsel_right_red': 'fg=red',
+      \ 'airline_tab_to_airline_tabfill_inactive_inactive_red': 'fg=red',
+      \ 'airline_tab_to_airline_tabfill_red': 'fg=red',
+      \ 'airline_tab_to_airline_tabsel_inactive_inactive_red': 'fg=red',
+      \ 'airline_tab_to_airline_tabsel_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tab_left_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tab_right_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabfill': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabfill_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabfill_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabtype': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabtype_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabfill_to_airline_tabtype_red': 'fg=red',
+      \ 'airline_tabmod_to_airline_tabfill_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabmod_to_airline_tabfill_red': 'fg=red',
+      \ 'airline_tabmod_to_airline_tabhid_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabmod_to_airline_tabhid_red': 'fg=red',
+      \ 'airline_tabsel_to_airline_tabfill': 'fg=red',
+      \ 'airline_tabsel_to_airline_tabfill_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabsel_to_airline_tabfill_red': 'fg=red',
+      \ 'airline_tabsel_to_airline_tabhid_inactive_inactive_red': 'fg=red',
+      \ 'airline_tabsel_to_airline_tabhid_red': 'fg=red',
+      \ 'airline_warning': 'bg=yellow',
+      \ 'airline_warning_bold': 'bg=yellow',
+      \ 'airline_warning_inactive': 'fg=yellow',
+      \ 'airline_warning_inactive_bold': 'fg=yellow',
+      \ 'airline_warning_inactive_red': 'fg=red bg=yellow',
+      \ 'airline_warning_red': 'bg=yellow fg=red',
+      \ 'airline_warning_to_airline_error_red': 'fg=red',
+      \ 'airline_x_inactive_red': 'fg=orange',
+      \ 'airline_x_red': 'fg=orange',
+      \ 'airline_x_to_airline_y_inactive_inactive_red': 'fg=red',
+      \ 'airline_x_to_airline_y_red': 'fg=red',
+      \ 'airline_y_inactive_red': 'fg=red',
+      \ 'airline_y_red': 'fg=red',
+      \ 'airline_y_to_airline_z_inactive_inactive_red': 'fg=red',
+      \ 'airline_y_to_airline_z_red': 'fg=red',
+      \ 'airline_z_inactive_red': 'fg=red',
+      \ 'airline_z_red': 'fg=red',
+      \ 'airline_z_to_airline_warning_inactive': 'fg=yellow',
+      \ 'airline_z_to_airline_warning_inactive_inactive': 'fg=yellow',
+      \ 'airline_z_to_airline_warning_inactive_inactive_bold': 'fg=yellow',
+      \ 'airline_z_to_airline_warning_inactive_inactive_red': 'fg=red',
+      \ 'airline_z_to_airline_warning_red': 'fg=red',
+      \})
+
+set background=dark
+colorscheme royal
+
+" Let's roll.
