@@ -215,15 +215,17 @@ function! s:nvimux(key, command)
   endfor
 endfunction
 
+for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  call s:nvimux(s:i, s:i.'gt')
+endfor
 call s:nvimux('a', '<C-^>')
 call s:nvimux('t', ':$tabnew<CR>')
 call s:nvimux('v', ':vnew<CR>')
 call s:nvimux('s', ':new<CR>')
-for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  call s:nvimux(s:i, s:i.'gt')
-endfor
-call s:nvimux('n', 'gt')
-call s:nvimux('p', 'gT')
+call s:nvimux('n', ':bn<CR>')
+call s:nvimux('p', ':bp<CR>')
+call s:nvimux('u', 'gt')
+call s:nvimux('d', 'gT')
 call s:nvimux('h', '<C-w><C-h>')
 call s:nvimux('j', '<C-w><C-j>')
 call s:nvimux('k', '<C-w><C-k>')
@@ -459,96 +461,21 @@ filetype plugin indent on
 " When the following bug is fixed:
 " https://github.com/neovim/neovim/issues/5668
 " and the terminal has a transparent backgroun, then we can enable this.
-" (we'll need to set base16_shell_path too).
+" (we'll need to set base16_shell_path or something too).
 let g:base16_transparent_background = 0
-
-" Personal color groups:
-let g:base16_color_overrides = {
-      \ 'sbError': 'fg=dark3 bg=red bold',
-      \ 'sbWarning': 'fg=dark3 bg=orange',
-      \ 'sbNotify': 'fg=dark3 bg=yellow',
-      \ 'sbOk': 'fg=dark3 bg=green'}
 
 " Changes to the base theme
 let g:base16_color_modifiers = {
       \ 'Comment': 'fg=similar1'}
 
 " Hacks to prevent me from writing my own syntax files
-call extend(g:base16_color_overrides, {
+let g:base16_color_overrides = {
       \ 'vimCommentTitle': 'fg=yellow italic',
       \ 'ALEErrorSign': 'fg=red bg=similar3 bold',
       \ 'ALEWarningSign': 'fg=orange bg=similar3 bold',
       \ 'fzf1': 'fg=red bg=similar2',
       \ 'fzf2': 'fg=green bg=similar2',
-      \ 'fzf3': 'fg=yellow bg=similar2'})
-call extend(g:base16_color_modifiers, {
-      \ 'airline_a_inactive_red': 'fg=red',
-      \ 'airline_a_red': 'fg=orange',
-      \ 'airline_a_to_airline_b_inactive_inactive_red': 'fg=red',
-      \ 'airline_a_to_airline_b_red': 'fg=red',
-      \ 'airline_b_inactive_red': 'fg=red',
-      \ 'airline_b_red': 'fg=orange',
-      \ 'airline_b_to_airline_c_inactive_inactive_red': 'fg=red',
-      \ 'airline_b_to_airline_c_red': 'fg=red',
-      \ 'airline_c11_to_airline_x_red': 'fg=red',
-      \ 'airline_c1_inactive_red': 'fg=red',
-      \ 'airline_c1_to_airline_x_inactive_inactive_red': 'fg=red',
-      \ 'airline_c1_to_airline_x_red': 'fg=red',
-      \ 'airline_c_red': 'fg=red',
-      \ 'airline_c_to_airline_x_inactive_inactive_red': 'fg=red',
-      \ 'airline_c_to_airline_x_red': 'fg=red',
-      \ 'airline_error': 'bg=red',
-      \ 'airline_error_bold': 'bg=red',
-      \ 'airline_error_inactive': 'bg=red',
-      \ 'airline_error_inactive_bold': 'bg=red',
-      \ 'airline_error_inactive_red': 'bg=red',
-      \ 'airline_error_red': 'fg=orange bg=red',
-      \ 'airline_tab_left_to_airline_tabsel_left_red': 'fg=red',
-      \ 'airline_tab_right_to_airline_tabsel_right_red': 'fg=red',
-      \ 'airline_tab_to_airline_tabfill_inactive_inactive_red': 'fg=red',
-      \ 'airline_tab_to_airline_tabfill_red': 'fg=red',
-      \ 'airline_tab_to_airline_tabsel_inactive_inactive_red': 'fg=red',
-      \ 'airline_tab_to_airline_tabsel_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tab_left_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tab_right_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabfill': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabfill_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabfill_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabtype': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabtype_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabfill_to_airline_tabtype_red': 'fg=red',
-      \ 'airline_tabmod_to_airline_tabfill_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabmod_to_airline_tabfill_red': 'fg=red',
-      \ 'airline_tabmod_to_airline_tabhid_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabmod_to_airline_tabhid_red': 'fg=red',
-      \ 'airline_tabsel_to_airline_tabfill': 'fg=red',
-      \ 'airline_tabsel_to_airline_tabfill_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabsel_to_airline_tabfill_red': 'fg=red',
-      \ 'airline_tabsel_to_airline_tabhid_inactive_inactive_red': 'fg=red',
-      \ 'airline_tabsel_to_airline_tabhid_red': 'fg=red',
-      \ 'airline_warning': 'bg=yellow',
-      \ 'airline_warning_bold': 'bg=yellow',
-      \ 'airline_warning_inactive': 'fg=yellow',
-      \ 'airline_warning_inactive_bold': 'fg=yellow',
-      \ 'airline_warning_inactive_red': 'fg=red bg=yellow',
-      \ 'airline_warning_red': 'bg=yellow fg=red',
-      \ 'airline_warning_to_airline_error_red': 'fg=red',
-      \ 'airline_x_inactive_red': 'fg=orange',
-      \ 'airline_x_red': 'fg=orange',
-      \ 'airline_x_to_airline_y_inactive_inactive_red': 'fg=red',
-      \ 'airline_x_to_airline_y_red': 'fg=red',
-      \ 'airline_y_inactive_red': 'fg=red',
-      \ 'airline_y_red': 'fg=red',
-      \ 'airline_y_to_airline_z_inactive_inactive_red': 'fg=red',
-      \ 'airline_y_to_airline_z_red': 'fg=red',
-      \ 'airline_z_inactive_red': 'fg=red',
-      \ 'airline_z_red': 'fg=red',
-      \ 'airline_z_to_airline_warning_inactive': 'fg=yellow',
-      \ 'airline_z_to_airline_warning_inactive_inactive': 'fg=yellow',
-      \ 'airline_z_to_airline_warning_inactive_inactive_bold': 'fg=yellow',
-      \ 'airline_z_to_airline_warning_inactive_inactive_red': 'fg=red',
-      \ 'airline_z_to_airline_warning_red': 'fg=red',
-      \})
+      \ 'fzf3': 'fg=yellow bg=similar2'}
 
 set background=dark
 colorscheme royal
