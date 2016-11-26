@@ -48,7 +48,7 @@ set relativenumber                " Make line numbers cursor-relative.
 set scrolloff=3                   " Add top/bottom scroll margins.
 set showcmd                       " Show the last command.
 set showmatch                     " When a bracket is typed show its match.
-set showtabline=0                 " Just use :tabs and buffers.
+set showtabline=1                 " Experimental
 set smartcase ignorecase          " Ignore case unless there are cased characters.
 set smarttab                      " Shiftwidth is only for indents.
 set splitbelow splitright         " Windows should split in the direction I read.
@@ -132,7 +132,9 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'Soares/eunuch.vim'
-" Plug 'tpope/vim-obsession'  -- I'm rusty on this one and need to spend some time with it.
+
+" :Obsess when you need to.
+Plug 'tpope/vim-obsession'
 
 " This one is configured down below.
 Plug 'Soares/base16.nvim'
@@ -159,10 +161,6 @@ Plug 'Soares/write.vim'
 
 noremap <leader>bd :Bclose<CR>
 noremap <leader>bD :Bclose!<CR>
-noremap <leader>bn :bn<CR>
-noremap <leader>bp :bp<CR>
-noremap <leader>bl :ls<CR>
-noremap <leader>bt :b#<CR>
 Plug 'Soares/butane.vim'
 
 execute 'noremap <leader>a :Ag '
@@ -208,29 +206,30 @@ function! s:SmartSwitch()
   endif
 endfunction
 
-function! s:nvimux(key, command)
+function! s:nvimux(map, key, command)
   for l:mode in split('nvit', '\zs')
     let l:exit = (l:mode == 't') ? '<C-\><C-n>' : (l:mode == 'i') ? '<ESC>' : ''
-    execute l:mode.'noremap' '<silent>' '<C-B>'.a:key l:exit.a:command
+    execute l:mode.a:map '<silent>' '<C-B>'.a:key l:exit.a:command
   endfor
 endfunction
 
 for s:i in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  call s:nvimux(s:i, s:i.'gt')
+  call s:nvimux('map', s:i, '<Plug>AirlineSelectTab'.s:i)
 endfor
-call s:nvimux('a', '<C-^>')
-call s:nvimux('t', ':$tabnew<CR>')
-call s:nvimux('v', ':vnew<CR>')
-call s:nvimux('s', ':new<CR>')
-call s:nvimux('n', ':bn<CR>')
-call s:nvimux('p', ':bp<CR>')
-call s:nvimux('u', 'gt')
-call s:nvimux('d', 'gT')
-call s:nvimux('h', '<C-w><C-h>')
-call s:nvimux('j', '<C-w><C-j>')
-call s:nvimux('k', '<C-w><C-k>')
-call s:nvimux('l', '<C-w><C-l>')
-call s:nvimux('<space>', ':call <SID>SmartSwitch()<CR>')
+call s:nvimux('noremap', 'a', '<C-^>')
+call s:nvimux('noremap', 't', ':$tabnew<CR>')
+call s:nvimux('noremap', 'v', ':vnew<CR>')
+call s:nvimux('noremap', 's', ':new<CR>')
+call s:nvimux('noremap', 'n', ':bn<CR>')
+call s:nvimux('noremap', 'p', ':bp<CR>')
+call s:nvimux('noremap', 'u', 'gt')
+call s:nvimux('noremap', 'd', 'gT')
+call s:nvimux('noremap', 'h', '<C-w><C-h>')
+call s:nvimux('noremap', 'j', '<C-w><C-j>')
+call s:nvimux('noremap', 'k', '<C-w><C-k>')
+call s:nvimux('noremap', 'l', '<C-w><C-l>')
+call s:nvimux('noremap', '?', ':ls<CR>')
+call s:nvimux('noremap', '<space>', ':call <SID>SmartSwitch()<CR>')
 
 unlet s:i
 delfunction s:nvimux
@@ -449,7 +448,10 @@ noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]own
 " ----------------------------------------------------------------------------
 " Statusline management ------------------------------------------------------
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+" let g:airline#extensions#tabline#buffer_nr_show = 1
 Plug 'vim-airline/vim-airline'
 
 call plug#end()
@@ -458,6 +460,7 @@ filetype plugin indent on
 
 " ============================================================================
 " Color management ===========================================================
+let g:base16_airline = 1
 " When the following bug is fixed:
 " https://github.com/neovim/neovim/issues/5668
 " and the terminal has a transparent backgroun, then we can enable this.
@@ -474,10 +477,10 @@ let g:base16_color_overrides = {
       \ 'ALEErrorSign': 'fg=red bg=similar3 bold',
       \ 'ALEWarningSign': 'fg=orange bg=similar3 bold',
       \ 'fzf1': 'fg=red bg=similar2',
-      \ 'fzf2': 'fg=green bg=similar2',
-      \ 'fzf3': 'fg=yellow bg=similar2'}
+      \ 'fzf2': 'fg=contrast1 bg=similar2',
+      \ 'fzf3': 'fg=contrast2 bg=similar2'}
 
 set background=dark
-colorscheme royal
+colorscheme summerfruit
 
 " Let's roll.
