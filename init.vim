@@ -14,6 +14,8 @@ noremap ' `
 noremap ` '
 " <C-B> will be used for tmux emulation, more or less.
 nnoremap <C-B> <NOP>
+" Easier tag nav
+nnoremap <C-S> <C-]>
 " These make it easier to indent / unindent using visual mode:
 vnoremap < <gv
 vnoremap > >gv
@@ -174,6 +176,13 @@ Plug 'ludovicchabant/vim-gutentags'
 
 
 " ----------------------------------------------------------------------------
+" the EXPERIMENTAL ZONE! -----------------------------------------------------
+Plug 'airblade/vim-gitgutter'
+
+Plug 'easymotion/vim-easymotion'
+
+
+" ----------------------------------------------------------------------------
 " The Land of Version Control ------------------------------------------------
 noremap <leader>gs :Gstatus<CR>
 noremap <leader>gc :Gcommit<CR>
@@ -256,7 +265,6 @@ noremap <leader>eco :FZFColors<CR>
 noremap <leader>ecm :FZFCommands<CR>
 noremap <leader>el :FZFLines<CR>
 noremap <leader>eL :FZFBLines<CR>
-noremap <leader><leader> :FZFBLines<CR>
 noremap <leader>et :FZFTags<CR>
 noremap <leader>eT :FZFBTags<CR>
 noremap <leader>em :FZFMarks<CR>
