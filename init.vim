@@ -25,6 +25,9 @@ inoremap <C-U> <C-G>u<C-U>
 " normal behavior.
 noremap J gJ
 noremap gJ J
+" Don't close the last window unless I mean it (as demonstrated by me putting
+" a space in front of the command).
+cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'close' : 'q')<CR>
 
 
 " ============================================================================
@@ -478,6 +481,7 @@ let g:base16_transparent_background = 0
 
 " Changes to the base theme
 let g:base16_color_modifiers = {
+      \ 'ErrorMsg': 'fg=red bg=none none',
       \ 'Comment': 'fg=similar1'}
 
 " Hacks to prevent me from writing my own syntax files
@@ -487,7 +491,11 @@ let g:base16_color_overrides = {
       \ 'ALEWarningSign': 'fg=orange bg=similar3 bold',
       \ 'fzf1': 'fg=red bg=similar2',
       \ 'fzf2': 'fg=contrast1 bg=similar2',
-      \ 'fzf3': 'fg=contrast2 bg=similar2'}
+      \ 'fzf3': 'fg=contrast2 bg=similar2',
+      \ 'GitGutterAdd': 'fg=green bg=similar3',
+      \ 'GitGutterChange': 'fg=yellow bg=similar3',
+      \ 'GitGutterDelete': 'fg=red bg=similar3',
+      \ 'GitGutterChangeDelete': 'fg=orange bg=similar3'}
 
 set background=dark
 colorscheme summerfruit
