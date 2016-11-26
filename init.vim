@@ -314,6 +314,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 noremap <silent> <leader>lo :execute empty(getloclist(0)) ? 'copen' : 'lopen'<CR>
 noremap <silent> <leader>lc :execute empty(getloclist(0)) ? 'cclose' : 'lclose'<CR>
 noremap <silent> <leader>lg :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
+nmap <silent> <leader>ln <Plug>(ale_next_wrap)
 nmap <silent> <leader>ll <Plug>(ale_next_wrap)
 nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
 
