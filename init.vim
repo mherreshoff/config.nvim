@@ -342,9 +342,9 @@ noremap <leader>cg :execute 'edit' getcwd()<CR>
 
 function! s:SetupDirvish()
   " Hide dot-files by default
-  call s:ToggleDotfiles()
+  call s:ToggleDotfiles('off')
   " Map gh to toggle showing hidden files
-  nnoremap <buffer> gh :call <SID>ToggleDotfiles()<CR>
+  nnoremap <buffer> gh :call <SID>ToggleDotfiles('')<CR>
   " Add tab mappings
   nnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
   xnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
@@ -352,11 +352,11 @@ function! s:SetupDirvish()
   lcd %
 endfun
 
-function! s:ToggleDotfiles()
+function! s:ToggleDotfiles(mode)
     if &filetype != 'dirvish' | return | endif
     let l:line = line('.')
     " Store dotfiles in b:dotfiles and remove
-    if !exists('b:dotfiles')
+    if a:mode == 'off' || !exists('b:dotfiles')
         let l:h = @h
         let @h = ''
         silent! g@\v/\.[^\/]+/?$@y H
