@@ -252,7 +252,7 @@ augroup nvimux
   " (You'd think we could just bd! and not worry about it, but bd! works
   " differently depending on whether we're editing a directory or some other
   " file. Argh.
-  autocmd TermClose * if bufname('%') !~# '^term://.*/fzf\>' | bd! | endif
+  autocmd TermClose * if bufname('%') !~# '^term://.*/fzf\>' | bd! | AirlineRefresh | endif
   autocmd BufWinEnter,WinEnter term://* startinsert
   autocmd BufLeave term://* stopinsert
 augroup end
