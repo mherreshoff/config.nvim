@@ -293,12 +293,12 @@ let g:fzf_colors =
       \ 'fg+':     ['fg', 'Normal'],
       \ 'bg+':     ['bg', 'Normal'],
       \ 'hl+':     ['fg', 'Normal'],
-      \ 'info':    ['fg', 'Statement'],
-      \ 'prompt':  ['fg', 'Statement'],
-      \ 'pointer': ['fg', 'Statement'],
-      \ 'marker':  ['fg', 'Statement'],
-      \ 'spinner': ['fg', 'Statement'],
-      \ 'header':  ['fg', 'Statement'] }
+      \ 'info':    ['fg', 'Normal'],
+      \ 'prompt':  ['fg', 'Normal'],
+      \ 'pointer': ['fg', 'Normal'],
+      \ 'marker':  ['fg', 'Normal'],
+      \ 'spinner': ['fg', 'Normal'],
+      \ 'header':  ['fg', 'Normal'] }
 Plug 'junegunn/fzf', {'dir': '~/.config/fzf', 'do': './install --all'}
 Plug 'junegunn/fzf.vim'
 
