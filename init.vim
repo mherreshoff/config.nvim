@@ -342,7 +342,7 @@ noremap <leader>cg :execute 'edit' getcwd()<CR>
 
 function! s:SetupDirvish()
   " Hide dot-files by default
-  call s:ToggleDotfiles('off')
+  call s:ToggleDotfiles(0)
   " Map gh to toggle showing hidden files
   nnoremap <buffer> gh :call <SID>ToggleDotfiles('')<CR>
   " Add tab mappings
@@ -353,23 +353,25 @@ function! s:SetupDirvish()
 endfun
 
 function! s:ToggleDotfiles(mode)
-    if &filetype != 'dirvish' | return | endif
-    let l:line = line('.')
-    " Store dotfiles in b:dotfiles and remove
-    if a:mode == 'off' || !exists('b:dotfiles')
-        let l:h = @h
-        let @h = ''
-        silent! g@\v/\.[^\/]+/?$@y H
-        silent! g//d _
-        let b:dotfiles = split(@h, '\n')
-        let @h = l:h
-        execute ':' . string(max([0, l:line - len(b:dotfiles)]))
-    " Re-add b:dotfiles to the top
-    else
-        call append(0, b:dotfiles)
-        execute ':' . (l:line + len(b:dotfiles))
-        unlet b:dotfiles
-    endif
+  " If mode is 0, dotfiles are turned off.
+  " Otherwise, dotfiles are toggled
+  if &filetype != 'dirvish' | return | endif
+  let l:line = line('.')
+  " Store dotfiles in b:dotfiles and remove
+  if a:mode == 0 || !exists('b:dotfiles')
+    let l:h = @h
+    let @h = ''
+    silent! g@\v/\.[^\/]+/?$@y H
+    silent! g//d _
+    let b:dotfiles = split(@h, '\n')
+    let @h = l:h
+    execute ':' . string(max([0, l:line - len(b:dotfiles)]))
+  " Re-add b:dotfiles to the top
+  else
+    call append(0, b:dotfiles)
+    execute ':' . (l:line + len(b:dotfiles))
+    unlet b:dotfiles
+  endif
 endfunction
 
 augroup dirvishsetup
