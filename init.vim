@@ -460,10 +460,10 @@ noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]own
 " ----------------------------------------------------------------------------
 " Statusline management ------------------------------------------------------
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#tab_nr_type = 2
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-" let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#tab_min_count = 2
 Plug 'vim-airline/vim-airline'
 
 call plug#end()
