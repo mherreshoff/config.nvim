@@ -28,6 +28,10 @@ noremap gJ J
 " Don't close the last window unless I mean it (as demonstrated by me putting
 " a space in front of the command).
 cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'close' : 'q')<CR>
+" Write the shit out of a file when I forgot to sudo
+cnoremap  w!! w !sudo tee % > /dev/null
+" Select what's just been pasted
+nnoremap gV `[V`]
 
 
 " ============================================================================
@@ -92,7 +96,6 @@ set expandtab                      " Alas, this appears to be where society conv
 set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
 noremap <leader>h :set list!<CR>
 
-
 " ============================================================================
 " Neovim global variables (ugh) ==============================================
 let g:terminal_scrollback_buffer_size = 2147483647
@@ -121,6 +124,29 @@ if !isdirectory(s:backupdir)
 endif
 let &backupdir = s:backupdir
 unlet s:backupdir
+
+
+" ============================================================================
+" Handling diff between focused and unfocused windows ========================
+augroup highlight_follows_focus
+    autocmd!
+    autocmd WinEnter * set cursorline
+    autocmd WinLeave * set nocursorline
+augroup END
+
+augroup highligh_follows_vim
+    autocmd!
+    autocmd FocusGained * set cursorline
+    autocmd FocusLost * set nocursorline
+augroup END
+
+augroup active_relative_number
+  autocmd!
+  autocmd BufEnter * :setlocal relativenumber
+  autocmd WinEnter * :setlocal relativenumber
+  autocmd BufLeave * :setlocal norelativenumber
+  autocmd WinLeave * :setlocal norelativenumber
+augroup END
 
 
 " ============================================================================
@@ -180,9 +206,19 @@ Plug 'ludovicchabant/vim-gutentags'
 
 " ----------------------------------------------------------------------------
 " the EXPERIMENTAL ZONE! -----------------------------------------------------
+noremap <leader>g? :GitGutterToggle<CR>
+let g:gitgutter_enabled = 0
+let g:gitgutter_map_keys = 0
 Plug 'airblade/vim-gitgutter'
 
 Plug 'easymotion/vim-easymotion'
+
+noremap <leader>u? :GundoToggle<CR>
+Plug 'sjl/gundo.vim'
+
+Plug 'tpope/vim-abolish'
+
+Plug 'metakirby5/codi.vim'
 
 
 " ----------------------------------------------------------------------------
@@ -259,6 +295,20 @@ augroup end
 
 
 " ----------------------------------------------------------------------------
+" Swap search pattern with the one that came before it. ----------------------
+" Could be promoted to a plugin eventually.
+function! s:ToggleSearchPattern()
+    let next_search_pattern_index = -1
+    if @/ ==# histget('search', -1)
+        let next_search_pattern_index = -2
+    endif
+    let @/ = histget('search', next_search_pattern_index)
+endfunction
+
+nnoremap <silent> <Leader>/ :<C-u>call <SID>ToggleSearchPattern()<CR>
+
+
+" ----------------------------------------------------------------------------
 " Fuzzy finding for navigation and great profit ------------------------------
 let g:fzf_command_prefix = 'FZF'
 let g:fzf_action = {'ctrl-t': 'tab split', 'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
@@ -323,14 +373,17 @@ nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
 
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
+let g:ale_lint_on_text_change = 0
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_save = 1
 " TODO: set 'haskell' to 'all' when the bug mentioned here:
 " https://github.com/w0rp/ale/issues/188
 " is fixed.
 let g:ale_linters = {'haskell': ['hlint']}
-" Right now, if this is pissing you off, just comment out this line.
-Plug 'w0rp/ale'
 " When https://github.com/w0rp/ale/issues/189 is fixed, we'll bind ,lq to
-" toggle the linter or whatever.
+" toggle the linter or whatever. Right now, if this is pissing you off, just
+" comment out the below line.
+Plug 'w0rp/ale'
 
 
 " ----------------------------------------------------------------------------
@@ -380,6 +433,8 @@ augroup dirvishsetup
 augroup END
 
 Plug 'justinmk/vim-dirvish'
+" And tell netrw to screw off, too.
+let g:loaded_netrwPlugin = 1
 
 
 " ----------------------------------------------------------------------------
@@ -428,7 +483,7 @@ endfunction
 
 augroup quickfix
   autocmd!
-  autocmd FileType qf call <SID>executeQuickFixBindings()
+  autocmd FileType qf call <SID>executeQuickFixBindingsi)
 augroup end
 
 
@@ -446,17 +501,18 @@ endfunction
 " ,gh takes you home.
 " ,gi takes you to your init.vim file.
 " ,gn takes you to the directory in which your neovim config lives.
-noremap <leader>gh :call <SID>Go('~/')<CR>
-execute 'noremap <leader>gi :call <SID>Go("'.expand('<sfile>:p').'")<CR>'
-execute 'noremap <leader>gn :call <SID>Go("'.expand('<sfile>:p:h').'")<CR>'
+noremap <leader>th :call <SID>Go('~/')<CR>
+execute 'noremap <leader>ti :call <SID>Go("'.expand('<sfile>:p').'")<CR>'
+execute 'noremap <leader>tn :call <SID>Go("'.expand('<sfile>:p:h').'")<CR>'
+execute 'noremap <leader>tc :call <SID>Go("~/.config")<CR>'
 
 if isdirectory(expand('~/Downloads'))
-  noremap <leader>gd :call <SID>Go('~/Downloads')<CR>
+  noremap <leader>td :call <SID>Go('~/Downloads')<CR>
 endif
 if isdirectory(expand('~/Dropbox'))
-  noremap <leader>gx :call <SID>Go('~/Dropbox')<CR>
+  noremap <leader>tx :call <SID>Go('~/Dropbox')<CR>
 endif
-noremap <leader>g? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]ownloads ǁ dropbo[x]"<CR>
+noremap <leader>t? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]ownloads ǁ dropbo[x]"<CR>
 
 
 " ----------------------------------------------------------------------------
@@ -467,6 +523,8 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#tab_min_count = 2
 Plug 'vim-airline/vim-airline'
+" Becasue I still need some way to get the synID:
+noremap <leader>sid :echomsg synIDattr(synID(line('.'),col('.'),1),'name')<CR>
 
 call plug#end()
 filetype plugin indent on
