@@ -21,17 +21,15 @@ vnoremap < <gv
 vnoremap > >gv
 " This makes it harder to lose work via accidental <C-U>.
 inoremap <C-U> <C-G>u<C-U>
-" EXPERIMENTAL: By default, we join lines w/out adding spaces.  Use gJ for the
-" normal behavior.
-noremap J gJ
-noremap gJ J
 " Don't close the last window unless I mean it (as demonstrated by me putting
 " a space in front of the command).
-cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'close' : 'q')<CR>
+" cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'close' : 'q')<CR>
 " Write the shit out of a file when I forgot to sudo
 cnoremap  w!! w !sudo tee % > /dev/null
 " Select what's just been pasted
 nnoremap gV `[V`]
+" remove trailing whitespace
+nnoremap <leader>tr :%s/[ \t]\+$/<CR><C-O>
 
 
 " ============================================================================
@@ -66,8 +64,9 @@ set viewoptions+=unix,slash       " Make windows views compatible.
 set viewoptions=cursor,folds      " Save fold & cursor locations.
 set visualbell                    " Don't make noise.
 set winminheight=0                " Squish windows as much as you like.
-set mouse=a                       " Allow mouse interactions.
+set mouse=nicr                    " Allow mouse interactions.  (r is experimental)
 set termguicolors                 " Use real colors.
+set inccommand=                   " TODO: turn on later.
 
 
 " ============================================================================
@@ -140,14 +139,6 @@ augroup highligh_follows_vim
     autocmd FocusLost * set nocursorline
 augroup END
 
-augroup active_relative_number
-  autocmd!
-  autocmd BufEnter * :setlocal relativenumber
-  autocmd WinEnter * :setlocal relativenumber
-  autocmd BufLeave * :setlocal norelativenumber
-  autocmd WinLeave * :setlocal norelativenumber
-augroup END
-
 
 " ============================================================================
 " Plugin time! ===============================================================
@@ -194,7 +185,11 @@ noremap <leader>bd :Bclose<CR>
 noremap <leader>bD :Bclose!<CR>
 Plug 'Soares/butane.vim'
 
-execute 'noremap <leader>a :Ag '
+execute 'noremap <leader>a :Ag! '
+let g:ag_prg = 'ag --ignore data/ --ignore output/ --ignore logs/ --ignore .cache/ --vimgrep'
+let g:ag_apply_qmappings=0
+let g:ag_apply_lmappings=0
+let g:ag_mapping_message=0
 Plug 'rking/ag.vim'
 
 let g:rooter_silent_chdir = 1
@@ -211,7 +206,7 @@ let g:gitgutter_enabled = 0
 let g:gitgutter_map_keys = 0
 Plug 'airblade/vim-gitgutter'
 
-Plug 'easymotion/vim-easymotion'
+" Plug 'easymotion/vim-easymotion'
 
 noremap <leader>u? :GundoToggle<CR>
 Plug 'sjl/gundo.vim'
@@ -219,6 +214,13 @@ Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-abolish'
 
 Plug 'metakirby5/codi.vim'
+
+let g:vim_isort_map = ''
+" TODO: python-only mapping:
+noremap <leader>is :Isort<CR>
+Plug 'fisadev/vim-isort'
+
+" Consider 'mhinz/vim-startify' one day.
 
 
 " ----------------------------------------------------------------------------
@@ -289,8 +291,8 @@ augroup nvimux
   " differently depending on whether we're editing a directory or some other
   " file. Argh.
   autocmd TermClose * if bufname('%') !~# '^term://.*/fzf\>' | bd! | AirlineRefresh | endif
-  autocmd BufWinEnter,WinEnter term://* startinsert
-  autocmd BufLeave term://* stopinsert
+  " autocmd BufWinEnter,WinEnter term://* startinsert
+  " autocmd BufLeave term://* stopinsert
 augroup end
 
 
@@ -335,7 +337,7 @@ augroup so8res_fzf
   autocmd!
   autocmd FileType fzf :tnoremap <buffer> <ESC> <C-G>
 augroup end
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l'
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore data/ --ignore output/ --ignore logs/ --ignore .cache/ -l'
 let g:fzf_colors =
     \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -364,26 +366,19 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " ----------------------------------------------------------------------------
 " Linting --------------------------------------------------------------------
-noremap <silent> <leader>lo :execute empty(getloclist(0)) ? 'copen' : 'lopen'<CR>
-noremap <silent> <leader>lc :execute empty(getloclist(0)) ? 'cclose' : 'lclose'<CR>
-noremap <silent> <leader>lg :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
-nmap <silent> <leader>ln <Plug>(ale_next_wrap)
-nmap <silent> <leader>ll <Plug>(ale_next_wrap)
-nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
+" nmap <silent> <leader>ln <Plug>(ale_next_wrap)
+" nmap <silent> <leader>ll <Plug>(ale_next_wrap)
+" nmap <silent> <leader>lh <Plug>(ale_previous_wrap)
 
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
 let g:ale_lint_on_text_change = 0
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
-" TODO: set 'haskell' to 'all' when the bug mentioned here:
-" https://github.com/w0rp/ale/issues/188
-" is fixed.
-let g:ale_linters = {'haskell': ['hlint']}
-" When https://github.com/w0rp/ale/issues/189 is fixed, we'll bind ,lq to
+" When https://github.com/w0rp/ale/issues/122 is fixed, we'll bind ,lq to
 " toggle the linter or whatever. Right now, if this is pissing you off, just
 " comment out the below line.
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 
 
 " ----------------------------------------------------------------------------
@@ -397,7 +392,7 @@ function! s:SetupDirvish()
   " Hide dot-files by default
   call s:ToggleDotfiles(0)
   " Map gh to toggle showing hidden files
-  nnoremap <buffer> gh :call <SID>ToggleDotfiles('')<CR>
+  nnoremap <buffer> gh :call <SID>ToggleDotfiles(1)<CR>
   " Add tab mappings
   nnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
   xnoremap <buffer> t :call dirvish#open('tabedit', 0)<CR>
@@ -414,7 +409,7 @@ function! s:ToggleDotfiles(mode)
   if a:mode == 0 || !exists('b:dotfiles')
     let l:h = @h
     let @h = ''
-    silent! g@\v/\.[^\/]+/?$@y H
+    silent! g@\v/(\.[^\/]+|[^\/]+\.pyc)/?$@y H
     silent! g//d _
     let b:dotfiles = split(@h, '\n')
     let @h = l:h
@@ -465,25 +460,36 @@ augroup END
 " ----------------------------------------------------------------------------
 " Quickfix and location list manipulation ------------------------------------
 function! s:executeQuickFixBindings()
-  let l:matches_window_prefix = empty(getloclist(0)) ? 'c' : 'l'
+  let l:c = empty(getloclist(0)) ? 'c' : 'l'
   " from ag.vim
-  nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
-  nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
-  nnoremap <silent> <buffer> o  <CR>
-  nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
-  nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
-  nnoremap <silent> <buffer> v  <C-w><CR><C-w>H
+  " nnoremap <silent> <buffer> h  <C-W><CR><C-w>K
+  " nnoremap <silent> <buffer> H  <C-W><CR><C-w>K<C-w>b
+  " nnoremap <silent> <buffer> o  <CR>
+  " nnoremap <silent> <buffer> t  <C-w><CR><C-w>T
+  " nnoremap <silent> <buffer> T  <C-w><CR><C-w>TgT<C-W><C-W>
+  " nnoremap <silent> <buffer> v  <C-w><CR><C-w>L
+  nnoremap <silent> <buffer> <C-S> <C-W><CR><C-W>J
+  execute 'nnoremap <silent> <buffer> g<C-S> <C-W><CR><C-W>J:botright '.l:c.'open<CR>'
+  nnoremap <silent> <buffer> <C-V> <C-W><CR><C-W>L
+  execute 'nnoremap <silent> <buffer> g<C-V> <C-W><CR><C-W>L:botright '.l:c.'open<CR>'
+  nnoremap <silent> <buffer> <C-T> <C-W><CR><C-W>T
+  execute 'nnoremap <silent> <buffer> g<C-T> <C-W><CR><C-W>TgT:botright '.l:c.'open<CR>'
+  nnoremap <silent> <buffer> <C-E>  <CR>
+  exe 'nnoremap <silent> <buffer> g<C-E> <CR>:botright '.l:c.'open<CR>'
 
-  exe 'nnoremap <silent> <buffer> e <CR><C-w><C-w>:' . l:matches_window_prefix .'close<CR>'
-  exe 'nnoremap <silent> <buffer> go <CR>:' . l:matches_window_prefix . 'open<CR>'
-  exe 'nnoremap <silent> <buffer> q  :' . l:matches_window_prefix . 'close<CR>'
-  exe 'nnoremap <silent> <buffer> gv <C-w><CR><C-w>H:' . l:matches_window_prefix . 'open<CR><C-w>J'
-  exe 'autocmd BufLeave <buffer> ' . l:matches_window_prefix . 'close'
+  exe 'nnoremap <silent> <buffer> q  :'.l:c.'close<CR>'
+  exe 'nnoremap <silent> <buffer> <ESC> :'.l:c.'close<CR>'
+  exe 'autocmd BufLeave <buffer> '.l:c.'close'
 endfunction
 
+noremap <silent> <leader>ln :execute (empty(getloclist(0)) ? 'c' : 'l').'next'<CR>
+noremap <silent> <leader>lp :execute (empty(getloclist(0)) ? 'c' : 'l').'previous'<CR>
+noremap <silent> <leader>lo :execute 'botright' (empty(getloclist(0)) ? 'c' : 'l').'open'<CR>
+noremap <silent> <leader>lc :execute (empty(getloclist(0)) ? 'c' : 'l').'close'<CR>
+noremap <silent> <leader>lg :execute empty(getloclist(0)) ? 'cc' : 'll'<CR>
 augroup quickfix
   autocmd!
-  autocmd FileType qf call <SID>executeQuickFixBindingsi)
+  autocmd FileType qf call <SID>executeQuickFixBindings()
 augroup end
 
 
@@ -518,11 +524,14 @@ noremap <leader>t? :echomsg "[h]ome ǁ [i]nit.vim ǁ nvim [c]onfig dir ǁ [d]own
 " ----------------------------------------------------------------------------
 " Statusline management ------------------------------------------------------
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#tab_nr_type = 2
+let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#tab_min_count = 2
+let g:airline_detect_spell = 0
+let g:airline#extensions#whitespace#checks = ['indent', 'mixed-indent-file']
 Plug 'vim-airline/vim-airline'
+
 " Becasue I still need some way to get the synID:
 noremap <leader>sid :echomsg synIDattr(synID(line('.'),col('.'),1),'name')<CR>
 
@@ -542,7 +551,7 @@ let g:base16_transparent_background = 0
 " Changes to the base theme
 let g:base16_color_modifiers = {
       \ 'ErrorMsg': 'fg=red bg=none none',
-      \ 'Comment': 'fg=similar1'}
+      \ 'Comment': 'fg=green'}
 
 " Hacks to prevent me from writing my own syntax files
 let g:base16_color_overrides = {
@@ -557,7 +566,7 @@ let g:base16_color_overrides = {
       \ 'GitGutterDelete': 'fg=red bg=similar3',
       \ 'GitGutterChangeDelete': 'fg=orange bg=similar3'}
 
-set background=dark
+set background=light
 colorscheme summerfruit
 
 " Let's roll.
