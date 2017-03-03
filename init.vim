@@ -87,7 +87,9 @@ set wildmode=list:longest
 set tabstop=2
 set shiftwidth=0                  " Now the shiftwidth() function will use &tabstop
 set softtabstop=-1                " Use the shiftwidth
-set expandtab                      " Alas, this appears to be where society converged.
+set expandtab                     " Alas, this appears to be where society converged.
+set textwidth=127                 " allow longer lines
+set nowrap
 
 
 " ============================================================================
@@ -186,7 +188,7 @@ noremap <leader>bD :Bclose!<CR>
 Plug 'Soares/butane.vim'
 
 execute 'noremap <leader>a :Ag! '
-let g:ag_prg = 'ag --ignore data/ --ignore output/ --ignore logs/ --ignore .cache/ --vimgrep'
+let g:ag_prg = 'ag --ignore output/ --ignore logs/ --ignore .cache/ --vimgrep'
 let g:ag_apply_qmappings=0
 let g:ag_apply_lmappings=0
 let g:ag_mapping_message=0
@@ -337,7 +339,7 @@ augroup so8res_fzf
   autocmd!
   autocmd FileType fzf :tnoremap <buffer> <ESC> <C-G>
 augroup end
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore data/ --ignore output/ --ignore logs/ --ignore .cache/ -l'
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore output/ --ignore logs/ --ignore .cache/ -l'
 let g:fzf_colors =
     \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -530,7 +532,9 @@ let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline_detect_spell = 0
 let g:airline#extensions#whitespace#checks = ['indent', 'mixed-indent-file']
-Plug 'vim-airline/vim-airline'
+Plug 'Soares/vim-airline'
+
+Plug 'lukaszkorecki/workflowish'
 
 " Becasue I still need some way to get the synID:
 noremap <leader>sid :echomsg synIDattr(synID(line('.'),col('.'),1),'name')<CR>

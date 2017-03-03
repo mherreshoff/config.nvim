@@ -13,13 +13,16 @@ digraph ^n 8319   " ⁿ
 digraph x* 215    " ×
 digraph xx 215    " ×
 digraph to 8594   " →
+digraph mt 8614   " ↦
 digraph BB 120121 " 𝔹
 digraph CC 8450   " ℂ
 digraph NN 8469   " ℕ
 digraph QQ 8474   " ℚ
 digraph RR 8477   " ℝ
 digraph ZZ 8484   " ℤ
-digraph [. 11037  " ⬝
+digraph 2^ 178    " ²
+digraph 3^ 179    " ³
+digraph .- 183    " ·
 digraph U+ 8846   " ⊎
 digraph ne 8800   " ≠
 digraph sz 8320   " ₀
@@ -37,9 +40,14 @@ digraph af  8728  " ∘
 digraph oo  8728  " ∘
 digraph <\| 10216 " ⟨
 digraph \|> 10217 " ⟩
+digraph <\ 10216 " ⟨
+digraph \> 10217 " ⟩
+digraph h- 295    " ħ
 digraph Sp  7510  " ᵖ
 digraph (=  8834  " ⊂
 digraph =)  8835  " ⊃
+digraph o*  8855  " ⊗
+digraph o+  8853  " ⊕
 
 digraph lr 9670   " ◆
 digraph r> 9656   " ▸
@@ -87,6 +95,7 @@ digraph \|\| 449 " ǁ
 digraph =~  8780 " ≌
 digraph ~=  8771 " ≃
 digraph ~~  8776 " ≈
+digraph S\|  8747 " ∫
 
 digraph al 945 " α
 digraph be 946 " β
