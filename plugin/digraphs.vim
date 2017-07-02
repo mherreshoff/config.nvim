@@ -10,6 +10,7 @@ digraph oo  8734  " ∞
 
 digraph ^* 176    " °
 digraph ^n 8319   " ⁿ
+digraph _t 8348   " ₜ
 digraph x* 215    " ×
 digraph xx 215    " ×
 digraph to 8594   " →

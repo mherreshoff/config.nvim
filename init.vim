@@ -67,6 +67,7 @@ set winminheight=0                " Squish windows as much as you like.
 set mouse=nicr                    " Allow mouse interactions.  (r is experimental)
 set termguicolors                 " Use real colors.
 set inccommand=                   " TODO: turn on later.
+set nojoinspaces
 
 
 " ============================================================================
@@ -173,6 +174,8 @@ Plug 'tpope/vim-markdown'
 
 let g:vimtex_imaps_enabled = 0
 Plug 'lervag/vimtex'
+
+autocmd BufNewFile,BufRead *.json set ft=javascript
 
 " Plug 'derekelkins/agda-vim'
 
@@ -570,7 +573,7 @@ let g:base16_color_overrides = {
       \ 'GitGutterDelete': 'fg=red bg=similar3',
       \ 'GitGutterChangeDelete': 'fg=orange bg=similar3'}
 
-set background=light
+set background=dark
 colorscheme summerfruit
 
 " Let's roll.
