@@ -227,6 +227,11 @@ Plug 'fisadev/vim-isort'
 
 " Consider 'mhinz/vim-startify' one day.
 
+" Lean
+Plug 'leanprover/lean.vim'
+" This gives us syntax highlighting.
+
+" TODO: integrate with https://github.com/autozimu/LanguageClient-neovim
 
 " ----------------------------------------------------------------------------
 " The Land of Version Control ------------------------------------------------
